@@ -1,0 +1,1 @@
+export {default as ChatWindowComponent} from "./ChatWindowComponent.svelte";
