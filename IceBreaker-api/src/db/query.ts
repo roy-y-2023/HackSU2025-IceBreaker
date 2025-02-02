@@ -27,6 +27,9 @@ export const QueryService = {
             .select({email: accessTokenTable.user_email})
             .from(accessTokenTable)
             .where(eq(accessTokenTable.token, accessToken));
+        if (result.length == 0){
+            return "";
+        }
 
         return result[0].email ?? "";
     },
@@ -94,6 +97,16 @@ export const QueryService = {
                     initial_analysis: analysis,
                 })
                 .where(eq(userMentalHealthProfile.user_email, userEmail));
+        },
+        getInitialAnalysis: async (userEmail: string) => {
+            let result = await drizzle
+                .select({initial_analysis: userMentalHealthProfile.initial_analysis})
+                .from(userMentalHealthProfile)
+                .where(eq(userMentalHealthProfile.user_email, userEmail));
+            if (result.length == 0){
+                return "";
+            }
+            return result[0].initial_analysis;
         },
     },
     Chat: {

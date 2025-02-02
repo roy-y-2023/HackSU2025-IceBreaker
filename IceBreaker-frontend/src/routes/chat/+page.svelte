@@ -1,7 +1,7 @@
 <script lang="ts">
     import {ChatWindowComponent, LocalChatWindowComponent} from "$lib/components";
 
-    let conversations = ["system", "onboarding"];
+    let conversations = ["system", "check-in", "onboarding"];
     let currentConversation = $state(conversations[0]);
 
 </script>

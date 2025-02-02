@@ -3,15 +3,20 @@
 <script lang="ts">
     import {backend} from "$lib/backend";
     import {iceBreakerAccessToken} from "$lib/store";
+    import {toast} from "@zerodevx/svelte-toast";
 
     let tags: string[] = $state([]);
 
-    let tag = $state("");
+    let tag: string = $state("");
 
     async function getTags(): Promise<string[]> {
         let resp = await backend.v1.tagging.tags.get({query: {
             token: $iceBreakerAccessToken
             }});
+        if (resp.error){
+            toast.push(`Failed to get tags: ${resp.error}`);
+            return;
+        }
         return resp.data
     }
 

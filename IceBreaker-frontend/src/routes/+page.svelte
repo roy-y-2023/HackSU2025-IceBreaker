@@ -11,6 +11,6 @@
 <div class="centered">
     <div>
         <a class="button" href="/login">Login</a>
-        <a class="button" href="/register">Register</a>
+<!--        <a class="button" href="/register">Register</a>-->
     </div>
 </div>

@@ -35,7 +35,6 @@
         justify-items: left;
         flex-direction: column;
     }
-
 </style>
 
 <div class="centered" style="flex-direction: column;">

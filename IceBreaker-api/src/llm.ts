@@ -6,7 +6,7 @@ const client = new OpenAI({
 });
 
 async function createChatCompletion(conversation: LLMConversationEntry[], json = false) {
-    return await client.chat.completions.create({
+    return client.chat.completions.create({
         messages: conversation,
         model: 'gpt-4o-mini',
         response_format: {type: json ? "json_object" : "text"}
@@ -14,12 +14,26 @@ async function createChatCompletion(conversation: LLMConversationEntry[], json =
 }
 
 export const LLMService = {
-    getCheckInQuestion: () => "how are you doing",
-    analyzeCheckInResponse: (_: {question: string, response: string}) => {
+    getCheckInQuestion: async (profile: string) => {
+        let conversation: LLMConversationEntry[] = [
+            {role: "system", content: "You are a mental health care assistant. Based on a user's profile, make a daily check-in question to ask. Return the question directly, do not add anything upfront"},
+            {role: "user", content: `Profile: ${profile}`},
+        ];
+        let response = await createChatCompletion(conversation);
+        
+        return response.choices[0].message.content;
+    },
+    analyzeCheckInResponse: async (_: {question: string, response: string}) => {
+        let conversation: LLMConversationEntry[] = [
+            {role: "system", content: `You are a mental health care assistant. Based on the user's response to the check-in question, provide advice to the user and suggest any updates to their profile. Respond in JSON in format of {"adviceToUser": "", "userProfileUpdate": ""}`},
+            {role: "user", content: `Question: ${_.question}\nResponse: ${_.response}`},
+        ];
+        let response = await createChatCompletion(conversation, true);
+        let result = JSON.parse(response.choices[0].message.content ?? `{"adviceToUser": "", "userProfileUpdate": ""}`);
         return {
-            adviceToUser: "",
-            userProfileUpdate: ""
-        }
+            adviceToUser: result.adviceToUser,
+            userProfileUpdate: result.userProfileUpdate
+        };
     },
     onboardingConversation: async (conversations: LLMConversationEntry[]): Promise<{
         conversation: LLMConversationEntry[],
@@ -53,10 +67,10 @@ export const LLMService = {
     },
     analyzeOnboardingSurveyFollowUpQuestion: async (surveyResult: string, followUp: string): Promise<{suggestion: string, analysis: string}> => {
         let conversation: LLMConversationEntry[] = [
-            {role: "system", content: "You are a mental health care assistant. Analyze user's response to question, create a brief treatment and a profile that will be stored for future use. Respond in format of {suggestion: string, analysis: string}"},
+            {role: "system", content: "You are a mental health care assistant. Analyze user's response to question, create a brief treatment and a profile that will be stored for future use. Respond in JSON in format of {suggestion: string, analysis: string}"},
             {role: "user", content: `Survey Results: ${surveyResult}`},
         ];
-        let response = await createChatCompletion(conversation);
+        let response = await createChatCompletion(conversation, true);
 
         return JSON.parse(response.choices[0].message.content ?? `{"suggestion": "", "analysis": ""}`);
     },

@@ -19,13 +19,13 @@
     <div class="navbar-menu" class:is-active={isNavbarBurgerActive}>
         <div class="navbar-end">
             <div class="navbar-item">
-                <a href="/chat">Start</a>
+                <a href="/onboarding">Onboarding Question</a>
+            </div>
+            <div class="navbar-item">
+                <a href="/check-in">Check-in</a>
             </div>
             <div class="navbar-item">
                 <a href="/interests">Interests</a>
-            </div>
-            <div class="navbar-item">
-                <a href="/onboarding">Onboarding Question</a>
             </div>
             <div class="navbar-item">
                 <a href="/login">Login</a>

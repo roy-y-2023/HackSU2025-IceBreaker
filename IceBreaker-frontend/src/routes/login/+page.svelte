@@ -4,6 +4,7 @@
     import {iceBreakerAccessToken} from "$lib/store";
     import {backend} from "$lib/backend";
     import {onMount} from "svelte";
+    // import {loginWithDiscord} from "discord";
 
     let loginSuccess = false;
     onMount(async () => {
@@ -34,6 +35,7 @@
 
 <div class="centered" style="flex-direction: column;">
     <a class="button" href="/login/discord">Login with Discord</a>
+<!--    <a class="button" onclick={loginWithDiscord}>Login with Discord</a>-->
 
     <br>
 

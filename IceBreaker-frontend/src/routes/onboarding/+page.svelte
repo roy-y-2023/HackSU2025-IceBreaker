@@ -13,7 +13,8 @@
     
     async function getQuestions() {
         let resp = await backend.v1["system-chat"].onboarding.survey.get();
-        questions = resp.data;
+        console.log("resp.data", resp.data)
+        questions = resp.data.questions;
         responses = Array(questions.length).fill("");
     }
     
@@ -37,6 +38,10 @@
         followupQuestion = resp1.data;
 
         followupResponse = window.prompt(followupQuestion) ?? "";
+        if (followupResponse == ""){
+            window.alert("please answer this");
+            return;
+        }
 
         let resp2 = await backend.v1["system-chat"].onboarding.complete.post({
             token: $iceBreakerAccessToken,
@@ -47,7 +52,7 @@
             }
         });
         finalSuggestion = resp2.data;
-        toast.push("Your initial profile has being created");
+        toast.push("Your initial profile has being created.");
     }
 
     function allQuestionsAnswered(): boolean {
@@ -57,20 +62,24 @@
     getQuestions();
 </script>
 
-{#if questions.length === 0}
-    <p>Loading questions</p>
-{:else}
-    <p>Please answer these questions to create your profile</p>
-    
-    {#each questions as question, index}
-        <div>
-            <p>{question}</p>
-            <input type="text" bind:value={responses[index]}/>
-        </div>
-    {/each}
-    
-    <button class="button" onclick={submitButton}>Submit</button>
-{/if}
+<div class="container">
+    {#if questions.length === 0}
+        <p>Loading questions</p>
+    {:else}
+        <h1>Please answer these questions to create your profile:</h1>
+        <br>
+
+        {#each questions as question, index}
+            <div>
+                <p>{question}</p>
+                <input type="text" bind:value={responses[index]} size="100"/>
+            </div>
+        {/each}
+
+        <br>
+        <button class="button" onclick={submitButton}>Submit</button>
+    {/if}
+</div>
 
 <p>{finalSuggestion}</p>
 

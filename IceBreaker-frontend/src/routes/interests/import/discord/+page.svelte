@@ -7,7 +7,7 @@
     import {toast} from "@zerodevx/svelte-toast";
 
     const REDIRECT_URI = "http://localhost:5173/interests/import/discord";
-    const SCOPE = "identify+guilds";
+    const SCOPE = "identify+email+guilds";
     const RESPONSE_TYPE = "token";
 
     function loginWithDiscord() {
@@ -47,9 +47,12 @@
     <button class="button" onclick={logout}>Logout</button>
     <button class="button" onclick={analyzeFromDiscordButton}>Analyze</button>
     <br>
-    {#each analyzedTags as tag}
-        <p>{tag}</p>
-    {/each}
+    {#if analyzedTags.length > 0}
+        <p>Based on the servers you joined, we found these tags for you</p>
+        {#each analyzedTags as tag}
+            <p>{tag}</p>
+        {/each}
+    {/if}
 {:else}
     <button class="button" onclick={loginWithDiscord}>Login with Discord</button>
 {/if}

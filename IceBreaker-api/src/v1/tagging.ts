@@ -4,9 +4,13 @@ import {DiscordAPI} from "../data-source/discord";
 import {LLMService} from "../llm";
 
 export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
-    .get("/tags", async ({query}): Promise<string[]> => {
+    .get("/tags", async ({query, set}): Promise<string[]> => {
         let email = await QueryService.getUserEmail(query["token"] ?? "");
-        console.log("email", email);
+        if (!email) {
+            set.status = 403;
+            return "user not found";
+        }
+        
         return (await QueryService.getUserTags(email)).map((ele) => {
             return ele.tag;
         })

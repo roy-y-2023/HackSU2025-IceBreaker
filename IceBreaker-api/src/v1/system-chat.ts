@@ -19,8 +19,16 @@ export const systemChatRouter = new Elysia({prefix: "/v1/system-chat"})
             token: t.String(),
         })
     })
-    .get("/check-in", async () => {
-        return LLMService.getCheckInQuestion()
+    .get("/check-in", async ({query, set}) => {
+        let email = await QueryService.getUserEmail(query.token ?? "");
+        if (!email) {
+            set.status = 403;
+            return "user not found"
+        }
+        
+        let userMHProfile = await QueryService.UserMentalHealthProfile.getInitialAnalysis(email);
+        
+        return LLMService.getCheckInQuestion(userMHProfile);
     }, {
         query: t.Object({
             token: t.String(),
@@ -59,7 +67,9 @@ export const systemChatRouter = new Elysia({prefix: "/v1/system-chat"})
     .get("/onboarding/survey", () => {
         return {
             questions: [
-                "why are you here today",
+                "Do you have anything that fuels your worries? Are you able to get enough sleep and concentrate enough? Does all of this affect your social dynamic and employment life? ",
+                "How sluggish do you feel on a day to day basis? Do you also feel agitated and have a loss of appetite? Would say your emotions affect your decision making skills as well? ",
+                "How prevalent are any of these issues: Facial pain, jaw tiredness, tongue thrusting, lump feeling in the throat? Has binge eating been an issue for you? How about headaches or vomiting? ",
             ],
         }
     })
