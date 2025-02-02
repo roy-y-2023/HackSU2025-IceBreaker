@@ -14,11 +14,24 @@
     <p class="has-text-centered">Login Success!</p>
 {/if}
 
-<br>
+<style>
+    @import '../global.css';
 
-<a href="/login/discord">Login with Discord</a>
+    * {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
-<p>
-    Or manually input an Access Token:
-    <input type="text" bind:value={$iceBreakerAccessToken}>
-</p>
+</style>
+
+<div class="centered" style="flex-direction: column;">
+    <a class="button" href="/login/discord">Login with Discord</a>
+
+    <br>
+
+    <p>
+        Or manually input an Access Token:
+        <input type="text" style="margin-left: 10px;" bind:value={$iceBreakerAccessToken}>
+    </p>
+
+</div>

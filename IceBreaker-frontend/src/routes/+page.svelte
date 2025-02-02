@@ -1,13 +1,3 @@
-<script lang="ts">
-    function login() {
-        
-    }
-
-    function register() {
-        
-    }
-</script>
-
 <style>
     @import './global.css';
 
@@ -20,7 +10,7 @@
 
 <div class="centered">
     <div>
-        <button class="button" on:click={login}>Login</button>
-        <button class="button" on:click={register}>Register</button>
+        <a class="button" href="/login">Login</a>
+        <a class="button" >Register</a>
     </div>
 </div>
