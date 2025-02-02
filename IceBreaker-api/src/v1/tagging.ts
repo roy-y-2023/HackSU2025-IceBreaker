@@ -46,7 +46,8 @@ export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
             return ele.name;
         });
         let tags = await LLMService.buildTagsFromDiscordServersJoined(serverNames);
-        await QueryService.addUserTags(email, tags);
+        console.log("tags", tags);
+        await QueryService.addUserTags(email, tags, true);
 
         return {
             servers: serverNames,

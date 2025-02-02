@@ -5,10 +5,11 @@ const client = new OpenAI({
    apiKey: process.env['OPENAI_KEY'],
 });
 
-async function createChatCompletion(conversation: LLMConversationEntry[]) {
+async function createChatCompletion(conversation: LLMConversationEntry[], json = false) {
     return await client.chat.completions.create({
         messages: conversation,
         model: 'gpt-4o-mini',
+        response_format: {type: json ? "json_object" : "text"}
     });
 }
 
@@ -61,11 +62,22 @@ export const LLMService = {
     },
     buildTagsFromDiscordServersJoined: async (serverNames: string[]): Promise<string[]> => {
         let conversation: LLMConversationEntry[] = [
-            {role: "system", content: "Given a list of servers a person joined, analyze their interests, return the result as a list of tags, each tag should be in lowercase and replace spaces with underscore."},
+            {role: "system", content: `Given the list of servers a person joined, analyze their interests, return the result in a JSON array (like [], do not include any keys) as tags. Each tag should be in lowercase and replace spaces with underscore. Do not just simply return the server's name, trying to analyze the topic of the server topic (likely relate to some game, character, activity etc.). Example: ["Blue Archive Official(GL)"] => ["blue_archive", "video_game", "mobile_game"]`},
             {role: "user", content: JSON.stringify(serverNames)},
         ];
-        let response = await createChatCompletion(conversation);
+        let response = await createChatCompletion(conversation, true);
 
-        return JSON.parse(response.choices[0].message.content ?? `[]`);
+        let responseMessage = response.choices[0].message.content;
+        try {
+            let json = JSON.parse(responseMessage ?? ``);
+            if (Array.isArray(json)) {
+                return json;
+            }
+            return json[Object.keys(json)[0]];
+        } catch (e) {
+            console.error("Failed to parse JSON");
+            console.log(responseMessage);
+            return [];
+        }
     },
 }

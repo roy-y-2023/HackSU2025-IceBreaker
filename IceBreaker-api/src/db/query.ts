@@ -36,13 +36,16 @@ export const QueryService = {
             .values([data])
             .onConflictDoNothing();
     },
-    addUserTags: async (userEmail: string, tags: string[]) => {
-        let data: typeof userTagsTable.$inferInsert[] = tags.map((ele) => {
+    addUserTags: async (userEmail: string, tags: string[], createTag = false) => {
+        let data: typeof userTagsTable.$inferInsert[] = await Promise.all(tags.map(async (ele) => {
+            if (createTag){
+                await QueryService.createTag(ele);
+            }
             return {
                 user_email: userEmail,
                 tag: ele,
             }
-        })
+        }))
         return drizzle
             .insert(userTagsTable)
             .values(data)
