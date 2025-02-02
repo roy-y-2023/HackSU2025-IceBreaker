@@ -67,6 +67,7 @@
         <p>Loading questions</p>
     {:else}
         <h1>Please answer these questions to create your profile:</h1>
+        <p>Try to provide two or three sentences for a more accurate diagnosics</p>
         <br>
 
         {#each questions as question, index}

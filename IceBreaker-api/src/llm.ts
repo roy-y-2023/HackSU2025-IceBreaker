@@ -22,7 +22,7 @@ export const LLMService = {
         let response = await createChatCompletion(conversation);
         
         return response.choices[0].message.content;
-    },
+    }, 
     analyzeCheckInResponse: async (_: {question: string, response: string}) => {
         let conversation: LLMConversationEntry[] = [
             {role: "system", content: `You are a mental health care assistant. Based on the user's response to the check-in question, provide advice to the user and suggest any updates to their profile. Respond in JSON in format of {"adviceToUser": "", "userProfileUpdate": ""}`},
