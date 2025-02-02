@@ -11,9 +11,13 @@ export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
             token: t.String(),
         })
     })
-    .post("/tag", async ({body}) => {
+    .post("/tag", async ({body, set}) => {
         const tag = body.tag;
         let email = await QueryService.getUserEmail(body.token);
+        if (!email) {
+            set.status = 403;
+            return "user not found"
+        }
         await QueryService.createTag(tag)
         let insertResult = await QueryService.addUserTag(email, tag);
         console.log("insertResult", insertResult);

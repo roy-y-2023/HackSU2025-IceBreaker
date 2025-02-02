@@ -10,8 +10,7 @@
     "@elysiajs/swagger": "^1.2.0",
     "@libsql/client": "^0.14.0",
     "drizzle-orm": "^0.39.1",
-    "elysia": "latest",
-    "IceBreaker-api": "file:"
+    "elysia": "latest"
   },
   "devDependencies": {
     "bun-types": "latest",

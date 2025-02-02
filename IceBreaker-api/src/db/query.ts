@@ -1,12 +1,13 @@
 import {drizzle} from "../service";
-import {eq} from "drizzle-orm";
-import {accessTokenTable, tagTable, userTagsTable} from "./schema";
+import {desc, eq} from "drizzle-orm";
+import {accessTokenTable, chatEntryTable, tagTable, userTagsTable} from "./schema";
 
 export const QueryService = {
     getUserEmail: async (accessToken: string): Promise<string> => {
-        // return drizzle.query.accessTokenTable.findFirst({
-        //     where: eq(accessTokenTable.token, accessToken)
-        // });
+        if (accessToken == ""){
+            return "";
+        }
+
         let result = await drizzle
             .select({email: accessTokenTable.user_email})
             .from(accessTokenTable)
@@ -34,5 +35,12 @@ export const QueryService = {
             .insert(userTagsTable)
             .values([data])
             .onConflictDoNothing();
+    },
+    getChatEntry: async (conversationID: string) => {
+        return drizzle.query.chatEntryTable.findMany({
+            where: eq(chatEntryTable.conversation_id, conversationID),
+            orderBy: desc(chatEntryTable.timestamp_ms),
+            limit: 100,
+        })
     },
 }

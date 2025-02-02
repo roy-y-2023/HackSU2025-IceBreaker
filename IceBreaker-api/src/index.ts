@@ -17,3 +17,5 @@ const app = new Elysia()
 console.log(
   `Docs at http://${app.server?.hostname}:${app.server?.port}/swagger`
 );
+
+export type IceBreakerAPI = typeof app;
