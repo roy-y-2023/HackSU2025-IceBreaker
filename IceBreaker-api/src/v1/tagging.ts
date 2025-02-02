@@ -17,19 +17,22 @@ export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
     })
     .post("/tag", async ({body, set}) => {
         const tag = body.tag;
+        const tagType = body.tag_type;
         let email = await QueryService.getUserEmail(body.token);
         if (!email) {
             set.status = 403;
             return "user not found"
         }
-        await QueryService.createTag(tag)
-        let insertResult = await QueryService.addUserTag(email, tag);
+        // @ts-ignore
+        await QueryService.createTag(tag, tagType)
+        let insertResult = await QueryService.addUserTags(email, [tag], "interest", true);
         console.log("insertResult", insertResult);
         return insertResult.rowsAffected;
     }, {
         body: t.Object({
             token: t.String(),
             tag: t.String(),
+            tag_type: t.String(),
         })
     })
     .post("/analyze/discord", async ({body, set}): Promise<string | {servers: any[], tags: string[]}> => {
@@ -47,7 +50,7 @@ export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
         });
         let tags = await LLMService.buildTagsFromDiscordServersJoined(serverNames);
         console.log("tags", tags);
-        await QueryService.addUserTags(email, tags, true);
+        await QueryService.addUserTags(email, tags, "interest", true);
 
         return {
             servers: serverNames,

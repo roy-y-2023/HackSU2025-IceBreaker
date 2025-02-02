@@ -12,16 +12,23 @@ export const accessTokenTable = sqliteTable("access_token_table", {
     user_email: text().notNull().references(()=> userTable.email),
 });
 
+export type TagType = "interest" | "mental_health";
 export const tagTable = sqliteTable("tag_table", {
-    tag: text().primaryKey(),
+    tag: text().notNull(),
+    type: text().notNull(),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.tag, table.type]})
+    }
 });
 
 export const userTagsTable = sqliteTable("user_tags_table", {
     user_email: text("user_email").notNull().references(()=> userTable.email),
     tag: text().notNull().references(()=> tagTable.tag),
+    tag_type: text().notNull(),
 }, (table) => {
     return {
-        pk: primaryKey({columns: [table.user_email, table.tag]})
+        pk: primaryKey({columns: [table.user_email, table.tag, table.tag_type]})
     }
 })
 
