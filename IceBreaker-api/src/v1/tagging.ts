@@ -1,5 +1,7 @@
 import {Elysia, t} from "elysia";
 import {QueryService} from "../db/query";
+import {DiscordAPI} from "../data-source/discord";
+import {LLMService} from "../llm";
 
 export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
     .get("/tags", async ({query}): Promise<string[]> => {
@@ -28,5 +30,31 @@ export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
         body: t.Object({
             token: t.String(),
             tag: t.String(),
+        })
+    })
+    .post("/analyze/discord", async ({body, set}) => {
+        let email = await QueryService.getUserEmail(body.token);
+        if (!email) {
+            set.status = 403;
+            return "user not found"
+        }
+
+        let servers = await DiscordAPI.getUserGuilds(body.discord_oauth2_token);
+        console.log("servers", servers);
+
+        let serverNames = servers.map((ele) => {
+            return ele.name;
+        });
+        let tags = await LLMService.buildTagsFromDiscordServersJoined(serverNames);
+        await QueryService.addUserTags(email, tags);
+
+        return {
+            servers: serverNames,
+            tags: tags,
+        }
+    }, {
+        body: t.Object({
+            token: t.String(),
+            discord_oauth2_token: t.String(),
         })
     })
