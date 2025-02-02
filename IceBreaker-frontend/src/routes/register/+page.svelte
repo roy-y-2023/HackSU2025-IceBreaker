@@ -12,9 +12,10 @@
     let username = $state("");
     let email = $state("");
     let password = $state("");
+    let supportOption = $state("support-seeking"); // "seeking" or "giving"
 
     function registerSubmit() {
-        // TODO
+        
     }
 </script>
 
@@ -46,7 +47,7 @@
 <div class="centered form">
     <div class="field">
         <div class="control has-icons-left has-icons-right">
-            <input class="input is-success" type="text" placeholder="Username" value={username}>
+            <input class="input is-success" type="text" placeholder="Username" bind:value={username}>
             <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
             </span>
@@ -58,7 +59,7 @@
 
     <div class="field">
         <div class="control has-icons-left has-icons-right">
-            <input class="input is-danger" type="email" placeholder="Email" value={email}>
+            <input class="input is-danger" type="email" placeholder="Email" bind:value={email}>
             <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
             </span>
@@ -70,23 +71,34 @@
 
     <div class="field">
         <p class="control has-icons-left">
-            <input class="input" type="password" placeholder="Password" value={password}>
+            <input class="input" type="password" placeholder="Password" bind:value={password}>
             <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
             </span>
         </p>
     </div>
 
+    <div class="field">
+        <div class="control radios">
+            <label class="radio">
+                <input type="radio" name="option" bind:group={supportOption} value="seeking" checked />
+                Here for support.
+            </label>
+            <label class="radio">
+                <input type="radio" name="option" bind:group={supportOption} value="giving" />
+                Here to give support.
+            </label>
+        </div>
+    </div>
+
+    <br>
+
     <div class="field is-grouped">
         <div class="control">
             <button class="button is-link" onclick={registerSubmit}>Submit</button>
         </div>
         <div class="control">
-            <button class="button is-link is-light" onclick={() => {
-                username = "";
-                email = "";
-                password = "";
-            }}>Cancel</button>
+            <a class="button is-link is-light" href="./">Cancel</a>
         </div>
     </div>
 </div>
