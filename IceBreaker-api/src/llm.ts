@@ -9,6 +9,9 @@ export const LLMService = {
         }
     },
     onboardingConversation: async (conversations: LLMConversationEntry[]): Promise<LLMConversationEntry[]> => {
+        if (conversations.length == 0){
+            // TODO: initial question
+        }
         return [];
     }
 }
