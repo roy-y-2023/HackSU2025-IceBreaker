@@ -8,7 +8,7 @@ export const chatRouter = new Elysia({prefix: "/v1/chat"})
             set.status = 403;
             return "user not found"
         }
-        return QueryService.getUserChats(email);
+        return QueryService.Chat.getUserChats(email);
     }, {
         query: t.Object({
             token: t.String(),

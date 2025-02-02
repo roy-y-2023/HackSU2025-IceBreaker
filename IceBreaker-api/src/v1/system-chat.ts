@@ -12,7 +12,7 @@ export const systemChatRouter = new Elysia({prefix: "/v1/system-chat"})
         }
 
         let conversationID = Naming.conversationWithSystem(email);
-        let messages = await QueryService.getChatEntry(conversationID);
+        let messages = await QueryService.Chat.getChatEntry(conversationID);
         return messages.reverse();
     }, {
         query: t.Object({

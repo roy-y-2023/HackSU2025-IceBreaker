@@ -2,12 +2,20 @@
     import {page} from "$app/state";
 
     import {iceBreakerAccessToken} from "$lib/store";
+    import {backend} from "$lib/backend";
+    import {onMount} from "svelte";
 
     let loginSuccess = false;
-    if (page.url.searchParams.has("success")) {
-        loginSuccess = true;
-        window.history.replaceState({}, document.title, "/login");
-    }
+    onMount(async () => {
+        if (page.url.searchParams.has("success")) {
+            loginSuccess = true;
+            window.history.replaceState({}, document.title, "/login");
+
+            if (!(await backend.v1.user.onboarding.survey.get({query: {token: $iceBreakerAccessToken}})).data) {
+                window.location.href = "/onboarding";
+            }
+        }
+    });
 </script>
 
 {#if loginSuccess}

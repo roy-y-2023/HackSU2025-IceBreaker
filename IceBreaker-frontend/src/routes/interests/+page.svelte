@@ -3,7 +3,6 @@
 <script lang="ts">
     import {backend} from "$lib/backend";
     import {iceBreakerAccessToken} from "$lib/store";
-    import {get} from "svelte/store";
 
     let tags: string[] = $state([]);
 
@@ -16,8 +15,9 @@
         return resp.data
     }
 
-    function addTag(tag: string){
+    async function addTag(tag: string){
         if (tag == "" || tags.includes(tag)) return;
+        await backend.v1.tagging.tag.post({token: $iceBreakerAccessToken, tag: tag, tag_type: "interest"});
         tags.push(tag);
     }
 
@@ -31,18 +31,6 @@
 
     getTags().then(r => tags = r);
 </script>
-
-<style>
-    @import '../global.css';
-
-    * {
-        display: flex;
-    }
-
-    .tag button {
-        margin-left: 10px;
-    }
-</style>
 
 <div class="tags centered">
     {#each tags as tag}
@@ -69,3 +57,14 @@
     <a href="/interests/import/discord">Analyze from Discord servers joined</a>
 </div>
 
+<style>
+    @import '../global.css';
+
+    * {
+        display: flex;
+    }
+
+    .tag button {
+        margin-left: 10px;
+    }
+</style>

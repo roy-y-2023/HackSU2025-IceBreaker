@@ -1,6 +1,6 @@
 import {drizzle} from "../service";
 import {desc, eq} from "drizzle-orm";
-import {accessTokenTable, chatEntryTable, chatParticipantTable, tagTable, userMentalHealthProfile, userTable, userTagsTable} from "./schema";
+import {accessTokenTable, chatEntryTable, chatParticipantTable, tagTable, TagType, userMentalHealthProfile, userTable, userTagsTable} from "./schema";
 
 export const QueryService = {
     checkUserExist: async (email: string): Promise<boolean> => {
@@ -43,30 +43,21 @@ export const QueryService = {
             where: eq(userTagsTable.user_email, userEmail)
         })
     },
-    createTag: async (tag: string) => {
+    createTag: async (tag: string, type: TagType) => {
         return drizzle
             .insert(tagTable)
-            .values({tag: tag})
+            .values({tag: tag, type: type})
             .onConflictDoNothing();
     },
-    addUserTag: async (userEmail: string, tag: string) => {
-        let data: typeof userTagsTable.$inferInsert = {
-            user_email: userEmail,
-            tag: tag,
-        }
-        return drizzle
-            .insert(userTagsTable)
-            .values([data])
-            .onConflictDoNothing();
-    },
-    addUserTags: async (userEmail: string, tags: string[], createTag = false) => {
+    addUserTags: async (userEmail: string, tags: string[], tagType: TagType, createTag = false) => {
         let data: typeof userTagsTable.$inferInsert[] = await Promise.all(tags.map(async (ele) => {
             if (createTag){
-                await QueryService.createTag(ele);
+                await QueryService.createTag(ele, tagType);
             }
             return {
                 user_email: userEmail,
                 tag: ele,
+                tag_type: tagType,
             }
         }))
         return drizzle
@@ -74,13 +65,7 @@ export const QueryService = {
             .values(data)
             .onConflictDoNothing();
     },
-    getChatEntry: async (conversationID: string) => {
-        return drizzle.query.chatEntryTable.findMany({
-            where: eq(chatEntryTable.conversation_id, conversationID),
-            orderBy: desc(chatEntryTable.timestamp_ms),
-            limit: 100,
-        })
-    },
+    
     UserMentalHealthProfile: {
         ensureExist: async (userEmail: string) => {
             let exist = await drizzle
@@ -111,18 +96,40 @@ export const QueryService = {
                 .where(eq(userMentalHealthProfile.user_email, userEmail));
         },
     },
-    getUserChats: async (userEmail: string) => {
-        return drizzle
-            .select({
-                conversation_id: chatEntryTable.conversation_id,
-                conversation_name: chatEntryTable.conversation_name,
-                timestamp_ms: chatEntryTable.timestamp_ms,
-                speaker_name: chatEntryTable.speaker_name,
-                content: chatEntryTable.content,
+    Chat: {
+        getUserChats: async (userEmail: string) => {
+            return drizzle
+                .select({
+                    conversation_id: chatEntryTable.conversation_id,
+                    conversation_name: chatEntryTable.conversation_name,
+                    timestamp_ms: chatEntryTable.timestamp_ms,
+                    speaker_name: chatEntryTable.speaker_name,
+                    content: chatEntryTable.content,
+                })
+                .from(chatEntryTable)
+                .innerJoin(chatParticipantTable, eq(chatEntryTable.conversation_id, chatParticipantTable.conversation_id))
+                .where(eq(chatParticipantTable.user_email, userEmail))
+                .orderBy(desc(chatEntryTable.timestamp_ms));
+        },
+        getChatEntry: async (conversationID: string) => {
+            return drizzle.query.chatEntryTable.findMany({
+                where: eq(chatEntryTable.conversation_id, conversationID),
+                orderBy: desc(chatEntryTable.timestamp_ms),
+                limit: 100,
             })
-            .from(chatEntryTable)
-            .innerJoin(chatParticipantTable, eq(chatEntryTable.conversation_id, chatParticipantTable.conversation_id))
-            .where(eq(chatParticipantTable.user_email, userEmail))
-            .orderBy(desc(chatEntryTable.timestamp_ms));
+        },
+    },
+    UserProfile: {
+        isOnboardingSurveyComplete: async (userEmail: string) => {
+            let result = await drizzle
+                .select({initial_analysis: userMentalHealthProfile.initial_analysis})
+                .from(userMentalHealthProfile)
+                .where(eq(userMentalHealthProfile.user_email, userEmail));
+
+            if (result.length == 0) {
+                return false;
+            }
+            return result[0].initial_analysis != "";
+        }
     },
 }
