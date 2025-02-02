@@ -32,7 +32,7 @@ export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
             tag: t.String(),
         })
     })
-    .post("/analyze/discord", async ({body, set}) => {
+    .post("/analyze/discord", async ({body, set}): Promise<string | {servers: any[], tags: string[]}> => {
         let email = await QueryService.getUserEmail(body.token);
         if (!email) {
             set.status = 403;

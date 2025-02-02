@@ -62,7 +62,7 @@ export const LLMService = {
     },
     buildTagsFromDiscordServersJoined: async (serverNames: string[]): Promise<string[]> => {
         let conversation: LLMConversationEntry[] = [
-            {role: "system", content: `Given the list of servers a person joined, analyze their interests, return the result in a JSON array (like [], do not include any keys) as tags. Each tag should be in lowercase and replace spaces with underscore. Do not just simply return the server's name, trying to analyze the topic of the server topic (likely relate to some game, character, activity etc.). Example: ["Blue Archive Official(GL)"] => ["blue_archive", "video_game", "mobile_game"]`},
+            {role: "system", content: `Given the list of servers a person joined, analyze their interests, return the result in a JSON array (like [], do not include any keys) as tags. Each tag should be in lowercase and replace spaces with underscore. Do not just simply return the server's name, trying to analyze the topic of the server topic (likely relate to some game, character, activity etc.). Example: ["Blue Archive Official(GL)"] => ["blue_archive", "video_game", "mobile_game"]. If multiple servers resulted in the same tag, only return the tag once.`},
             {role: "user", content: JSON.stringify(serverNames)},
         ];
         let response = await createChatCompletion(conversation, true);

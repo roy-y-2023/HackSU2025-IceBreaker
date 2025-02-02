@@ -37,6 +37,15 @@ export const chatEntryTable = sqliteTable("chat_entry_table", {
     }
 });
 
+export const chatParticipantTable = sqliteTable("chat_participant_table", {
+    conversation_id: text().notNull(),
+    user_email: text().notNull().references(()=> userTable.email),
+}, (table) => {
+    return {
+        pk: primaryKey({columns: [table.conversation_id, table.user_email]})
+    }
+});
+
 export const userMentalHealthProfile = sqliteTable("user_mental_health_profile", {
     user_email: text("user_email").notNull().references(()=> userTable.email),
     initial_analysis: text().notNull(),

@@ -49,5 +49,9 @@
         addTag(tag);
         tag = "";
     }}>Add</button>
-</div>    
+</div>
+
+<hr>
+
+<a href="/interests/import/discord">Analyze from Discord servers joined</a>
 

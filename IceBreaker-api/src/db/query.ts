@@ -1,8 +1,23 @@
 import {drizzle} from "../service";
 import {desc, eq} from "drizzle-orm";
-import {accessTokenTable, chatEntryTable, tagTable, userMentalHealthProfile, userTagsTable} from "./schema";
+import {accessTokenTable, chatEntryTable, chatParticipantTable, tagTable, userMentalHealthProfile, userTable, userTagsTable} from "./schema";
 
 export const QueryService = {
+    checkUserExist: async (email: string): Promise<boolean> => {
+        let result = await drizzle
+            .select({email: userTable.email})
+            .from(userTable)
+            .where(eq(userTable.email, email));
+
+        return result.length > 0;
+    },
+    createUser: async (_: {email: string, name: string}) => {
+        return drizzle
+            .insert(userTable)
+            .values([_])
+            .onConflictDoNothing();
+        
+    },
     getUserEmail: async (accessToken: string): Promise<string> => {
         if (accessToken == ""){
             return "";
@@ -14,6 +29,14 @@ export const QueryService = {
             .where(eq(accessTokenTable.token, accessToken));
 
         return result[0].email ?? "";
+    },
+    createAccessToken: async (email: string) => {
+        let token = Math.random().toString(36).substring(2);
+        await drizzle
+            .insert(accessTokenTable)
+            .values({token: token, user_email: email})
+            .onConflictDoNothing();
+        return token;
     },
     getUserTags: async (userEmail: string) => {
         return drizzle.query.userTagsTable.findMany({
@@ -86,7 +109,20 @@ export const QueryService = {
                     initial_analysis: analysis,
                 })
                 .where(eq(userMentalHealthProfile.user_email, userEmail));
-        }
+        },
     },
-
+    getUserChats: async (userEmail: string) => {
+        return drizzle
+            .select({
+                conversation_id: chatEntryTable.conversation_id,
+                conversation_name: chatEntryTable.conversation_name,
+                timestamp_ms: chatEntryTable.timestamp_ms,
+                speaker_name: chatEntryTable.speaker_name,
+                content: chatEntryTable.content,
+            })
+            .from(chatEntryTable)
+            .innerJoin(chatParticipantTable, eq(chatEntryTable.conversation_id, chatParticipantTable.conversation_id))
+            .where(eq(chatParticipantTable.user_email, userEmail))
+            .orderBy(desc(chatEntryTable.timestamp_ms));
+    },
 }

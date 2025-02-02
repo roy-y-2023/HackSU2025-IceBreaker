@@ -4,6 +4,8 @@ import {swagger} from "@elysiajs/swagger";
 
 import {systemChatRouter} from "./v1/system-chat";
 import {taggingRouter} from "./v1/tagging";
+import {chatRouter} from "./v1/chat";
+import {authRouter} from "./v1/auth";
 
 const app = new Elysia()
     .onRequest(({request}) => console.log(`${request.method} => ${new URL(request.url).pathname}`))
@@ -12,6 +14,8 @@ const app = new Elysia()
     .get("/", () => "Hello Elysia")
     .use(systemChatRouter)
     .use(taggingRouter)
+    .use(chatRouter)
+    .use(authRouter)
     .listen(8017);
 
 console.log(
