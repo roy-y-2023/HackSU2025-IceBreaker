@@ -60,7 +60,6 @@ export const QueryService = {
             return {
                 user_email: userEmail,
                 tag: ele,
-                tag_type: tagType,
             }
         }))
         return drizzle
@@ -72,13 +71,14 @@ export const QueryService = {
     UserMentalHealthProfile: {
         ensureExist: async (userEmail: string) => {
             let exist = await drizzle
-                .select({user_email: userTagsTable.user_email})
-                .from(userTagsTable)
-                .where(eq(userTagsTable.user_email, userEmail));
+                .select({user_email: userMentalHealthProfile.user_email})
+                .from(userMentalHealthProfile)
+                .where(eq(userMentalHealthProfile.user_email, userEmail));
 
             if (exist.length > 0){
                 return;
             }
+            console.log("create user mental health profile");
 
             let data: typeof userMentalHealthProfile.$inferInsert = {
                 user_email: userEmail,

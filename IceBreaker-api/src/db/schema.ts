@@ -18,17 +18,16 @@ export const tagTable = sqliteTable("tag_table", {
     type: text().notNull(),
 }, (table) => {
     return {
-        pk: primaryKey({columns: [table.tag, table.type]})
+        pk: primaryKey({columns: [table.tag]})
     }
 });
 
 export const userTagsTable = sqliteTable("user_tags_table", {
     user_email: text("user_email").notNull().references(()=> userTable.email),
     tag: text().notNull().references(()=> tagTable.tag),
-    tag_type: text().notNull(),
 }, (table) => {
     return {
-        pk: primaryKey({columns: [table.user_email, table.tag, table.tag_type]})
+        pk: primaryKey({columns: [table.user_email, table.tag]})
     }
 })
 

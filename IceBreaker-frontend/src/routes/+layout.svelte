@@ -22,7 +22,7 @@
                 <a href="/onboarding">Onboarding Question</a>
             </div>
             <div class="navbar-item">
-                <a href="/check-in">Check-in</a>
+                <a href="/check-in">Daily Check-in Question</a>
             </div>
             <div class="navbar-item">
                 <a href="/interests">Interests</a>

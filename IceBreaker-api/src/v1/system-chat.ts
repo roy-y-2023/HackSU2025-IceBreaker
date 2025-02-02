@@ -98,7 +98,9 @@ export const systemChatRouter = new Elysia({prefix: "/v1/system-chat"})
         }
 
         let _ = await LLMService.analyzeOnboardingSurveyFollowUpQuestion(JSON.stringify(body.surveyEntries), JSON.stringify(body.followUpQuestion));
-        await QueryService.UserMentalHealthProfile.setInitialAnalysis(email, _.analysis);
+        console.log("analyzeOnboardingSurveyFollowUpQuestion", _);
+        let insertionResult = await QueryService.UserMentalHealthProfile.setInitialAnalysis(email, _.analysis);
+        console.log("insertionResult", insertionResult)
         return _.suggestion;
     }, {
         body: t.Object({

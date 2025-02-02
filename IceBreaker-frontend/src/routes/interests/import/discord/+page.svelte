@@ -38,7 +38,7 @@
             return;
         }
 
-        analyzedTags = resp.data.tags;
+        analyzedTags = Array.isArray(resp.data.tags) ? resp.data.tags : [resp.data.tags];
     }
 </script>
 
@@ -49,9 +49,11 @@
     <br>
     {#if analyzedTags.length > 0}
         <p>Based on the servers you joined, we found these tags for you</p>
-        {#each analyzedTags as tag}
-            <p>{tag}</p>
-        {/each}
+        <ul>
+            {#each analyzedTags as tag}
+                <li>{tag}</li>
+            {/each}
+        </ul>
     {/if}
 {:else}
     <button class="button" onclick={loginWithDiscord}>Login with Discord</button>

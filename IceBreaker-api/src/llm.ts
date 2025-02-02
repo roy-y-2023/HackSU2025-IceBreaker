@@ -82,6 +82,7 @@ export const LLMService = {
         let response = await createChatCompletion(conversation, true);
 
         let responseMessage = response.choices[0].message.content;
+        console.log("responseMessage", responseMessage);
         try {
             let json = JSON.parse(responseMessage ?? ``);
             if (Array.isArray(json)) {
