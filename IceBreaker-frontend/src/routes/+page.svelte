@@ -9,14 +9,7 @@
 </script>
 
 <style>
-    * {
-        display: flex;
-    }
-
-    .centered {
-        justify-content: center;
-        text-align: center;
-    }
+    @import './global.css';
 
     .button {
         margin: 10px;

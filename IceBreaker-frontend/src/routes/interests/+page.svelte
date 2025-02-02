@@ -32,20 +32,32 @@
     getTags().then(r => tags = r);
 </script>
 
-<div>
+<style>
+    @import '../global.css';
+
+    * {
+        display: flex;
+    }
+
+    .tag button {
+        margin-left: 10px;
+    }
+</style>
+
+<div class="tags centered">
     {#each tags as tag}
-        <div style="display: flex;">
+        <div class="tag is-medium">
             <p>{tag}</p>
-            <button class="button" onclick={() => removeTag(tag)}>Remove</button>
+            <button class="delete" onclick={() => removeTag(tag)} aria-labelledby="span"></button>
         </div>
     {/each}
 </div>
 
 <hr>
 
-<div>
-    <input type="text" placeholder="Type your tag here" bind:value={tag}/>
-    <button onclick={() => {
+<div class="centered">
+    <input class="input" style="width: 25vw" type="text" placeholder="Type your tag here" bind:value={tag}/>
+    <button class="button" onclick={() => {
         addTag(tag);
         tag = "";
     }}>Add</button>
@@ -53,5 +65,7 @@
 
 <hr>
 
-<a href="/interests/import/discord">Analyze from Discord servers joined</a>
+<div class="centered">
+    <a href="/interests/import/discord">Analyze from Discord servers joined</a>
+</div>
 
