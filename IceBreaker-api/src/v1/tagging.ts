@@ -2,10 +2,12 @@ import {Elysia, t} from "elysia";
 import {QueryService} from "../db/query";
 
 export const taggingRouter = new Elysia({prefix: "/v1/tagging"})
-    .get("/tags", async ({query}) => {
+    .get("/tags", async ({query}): Promise<string[]> => {
         let email = await QueryService.getUserEmail(query["token"] ?? "");
         console.log("email", email);
-        return QueryService.getUserTags(email);
+        return (await QueryService.getUserTags(email)).map((ele) => {
+            return ele.tag;
+        })
     }, {
         query: t.Object({
             token: t.String(),
