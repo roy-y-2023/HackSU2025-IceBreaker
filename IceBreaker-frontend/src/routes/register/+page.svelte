@@ -9,8 +9,12 @@
         window.history.replaceState({}, document.title, "/login");
     }
 
-    function registerSubmit() {
+    let username = $state("");
+    let email = $state("");
+    let password = $state("");
 
+    function registerSubmit() {
+        // TODO
     }
 </script>
 
@@ -42,7 +46,7 @@
 <div class="centered form">
     <div class="field">
         <div class="control has-icons-left has-icons-right">
-            <input class="input is-success" type="text" placeholder="Username">
+            <input class="input is-success" type="text" placeholder="Username" value={username}>
             <span class="icon is-small is-left">
                 <i class="fas fa-user"></i>
             </span>
@@ -54,7 +58,7 @@
 
     <div class="field">
         <div class="control has-icons-left has-icons-right">
-            <input class="input is-danger" type="email" placeholder="Email">
+            <input class="input is-danger" type="email" placeholder="Email" value={email}>
             <span class="icon is-small is-left">
                 <i class="fas fa-envelope"></i>
             </span>
@@ -66,7 +70,7 @@
 
     <div class="field">
         <p class="control has-icons-left">
-            <input class="input" type="password" placeholder="Password">
+            <input class="input" type="password" placeholder="Password" value={password}>
             <span class="icon is-small is-left">
             <i class="fas fa-lock"></i>
             </span>
@@ -78,7 +82,11 @@
             <button class="button is-link" onclick={registerSubmit}>Submit</button>
         </div>
         <div class="control">
-            <button class="button is-link is-light">Cancel</button>
+            <button class="button is-link is-light" onclick={() => {
+                username = "";
+                email = "";
+                password = "";
+            }}>Cancel</button>
         </div>
     </div>
 </div>
